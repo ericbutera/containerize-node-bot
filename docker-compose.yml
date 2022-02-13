@@ -1,0 +1,27 @@
+version: '2'
+services:
+  bot:
+    build: .
+    command: node app.js
+    depends_on:
+    - redis
+    environment:
+    - REDIS_HOST=redis
+    - REDIS_PASS=very-secure-wow
+    - REDIS_CHANNEL=infochannel
+    - IRC_SERVER=host.docker.internal
+    - IRC_CHANNEL=#infoforcefeed
+    - IRC_NICK=nodebot
+  redis:
+    image: redis:6.2-alpine
+    restart: always
+    command: redis-server --requirepass very-secure-wow
+    ports:
+    - '6379:6379'
+  server:
+    image: inspircd/inspircd-docker
+    restart: always
+    ports:
+    - '6667:6667'
+    environment:
+      - INSP_ENABLE_DNSBL=no
